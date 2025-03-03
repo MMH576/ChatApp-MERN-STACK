@@ -4,6 +4,7 @@ import { MessageSquare, User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import AuthImagePattern from "../components/AuthImagePattern";
 import { toast } from "react-hot-toast";
+
 export const SignUpPage = () => {
   console.log("SignUpPage rendered");
   const [formData, setFormData] = useState({
@@ -29,7 +30,9 @@ export const SignUpPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const success = validateForm();
+
     if (success === true) signUp(formData);
   };
 
