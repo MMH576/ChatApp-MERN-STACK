@@ -2,7 +2,7 @@ import NavBar from "./components/NavBar";
 
 import { HomePage } from "./pages/HomePage";
 import { SignUpPage } from "./pages/SignUpPage.jsx";
-import { LogInPage } from "./pages/LogInPage.jsx";
+import LogInPage from "./pages/LogInPage";
 import { SettingsPage } from "./pages/SettingsPage.jsx";
 import { ProfilePage } from "./pages/ProfilePage.jsx";
 
