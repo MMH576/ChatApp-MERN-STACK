@@ -42,6 +42,7 @@ export const useAuthStore = create((set) => ({
     try {
       const res = await axiosInstance.post("/auth/login", data);
       set({ authUser: res.data });
+      localStorage.setItem('token', res.data.token);
       toast.success("Logged in successfully");
     } catch (error) {
       const errorMessage = error.response?.data?.message || "An error occurred";
@@ -59,6 +60,20 @@ export const useAuthStore = create((set) => ({
     } catch (error) {
       const errorMessage = error.response?.data?.message || "An error occurred";
       toast.error(errorMessage);
+    }
+  },
+
+  updateProfile: async (data) => {
+    set({ isUpdatingProfile: true });
+    try {
+      const res = await axiosInstance.put("/auth/update-profile", data);
+      set({ authUser: res.data });
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.log("error in update profile:", error);
+      toast.error(error.response?.data?.message || "An error occurred");
+    } finally {
+      set({ isUpdatingProfile: false });
     }
   },
 }));

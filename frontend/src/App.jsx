@@ -4,7 +4,7 @@ import { HomePage } from "./pages/HomePage";
 import { SignUpPage } from "./pages/SignUpPage.jsx";
 import LogInPage from "./pages/LogInPage";
 import { SettingsPage } from "./pages/SettingsPage.jsx";
-import { ProfilePage } from "./pages/ProfilePage.jsx";
+import { ProfilePage } from "./pages/ProfilePage";
 
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
@@ -30,7 +30,7 @@ const App = () => {
     );
 
   return (
-    <div className="bg-base-100">
+    <div data-theme="night">
       <NavBar />
       <Routes>
         <Route
