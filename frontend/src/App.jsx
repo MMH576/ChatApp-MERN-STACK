@@ -6,8 +6,11 @@ import { SignUpPage } from "./pages/SignUpPage";
 import { LogInPage } from "./pages/LogInPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { useAuthStore } from "./store/useAuthStore";
 
-export const Hello = () => {
+export const App = () => {
+  const { authUser } = useAuthStore();
+
   return (
     <div>
       <Navbar />
