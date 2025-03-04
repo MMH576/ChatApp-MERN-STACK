@@ -29,13 +29,42 @@ app.use(
   })
 );
 
-const port = process.env.PORT || 5001;
-
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-server.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-  connectDB();
+const PORT = process.env.PORT || 5001;
+
+// Debug logging
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+// Basic test route
+app.get("/api/test", (req, res) => {
+  res.json({ message: "Server is running!" });
+});
+
+// Connect to MongoDB first, then start the server
+try {
+  await connectDB();
+  console.log("MongoDB connected successfully");
+  
+  server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+} catch (error) {
+  console.error("Failed to start server:", error);
+  process.exit(1);
+}
+
+// Socket.IO connection handling
+io.on("connection", (socket) => {
+  console.log("A user connected", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected", socket.id);
+  });
 });
 
