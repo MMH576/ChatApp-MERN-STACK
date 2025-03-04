@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { Server } from "socket.io";
 import { createServer } from "http";
+import { initSocket } from "./lib/socket.js";
 
 dotenv.config();
 
@@ -19,6 +20,9 @@ const io = new Server(server, {
     credentials: true,
   },
 });
+
+// Initialize socket
+initSocket(io);
 
 app.use(express.json());
 app.use(cookieParser());

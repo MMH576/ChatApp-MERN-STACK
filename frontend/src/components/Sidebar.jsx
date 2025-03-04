@@ -8,7 +8,7 @@ const Sidebar = () => {
   const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } =
     useChatStore();
 
-  const { onlineUsers } = useAuthStore();
+  const { onlineUsers, authUser } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   useEffect(() => {
@@ -28,7 +28,6 @@ const Sidebar = () => {
           <Users className="size-6" />
           <span className="font-medium hidden lg:block">Contacts</span>
         </div>
-        {/* TODO: Online filter toggle */}
         <div className="mt-3 hidden lg:flex items-center gap-2">
           <label className="cursor-pointer flex items-center gap-2">
             <input
@@ -40,7 +39,7 @@ const Sidebar = () => {
             <span className="text-sm">Show online only</span>
           </label>
           <span className="text-xs text-zinc-500">
-            ({(onlineUsers?.length || 0) - 1} online)
+            ({onlineUsers.filter((id) => id !== authUser?._id).length} online)
           </span>
         </div>
       </div>
@@ -50,45 +49,40 @@ const Sidebar = () => {
           <button
             key={user._id}
             onClick={() => setSelectedUser(user)}
-            className={`
-              w-full p-3 flex items-center gap-3
-              hover:bg-base-300 transition-colors
-              ${
-                selectedUser?._id === user._id
-                  ? "bg-base-300 ring-1 ring-base-300"
-                  : ""
-              }
+            className={`w-full p-3 flex items-center gap-3 hover:bg-base-200 transition-colors
+              ${selectedUser?._id === user._id ? "bg-base-200" : ""}
             `}
           >
             <div className="relative mx-auto lg:mx-0">
-              <img
-                src={user.profilePic || "/avatar.png"}
-                alt={user.name}
-                className="size-12 object-cover rounded-full"
-              />
-              {onlineUsers?.includes(user._id) && (
-                <span
-                  className="absolute bottom-0 right-0 size-3 bg-green-500 
-                  rounded-full ring-2 ring-zinc-900"
-                />
+              <div className="avatar">
+                <div className="w-12 h-12 rounded-full">
+                  <img
+                    src={user.profilePic || "/default-avatar.png"}
+                    alt={user.fullName}
+                  />
+                </div>
+              </div>
+              {/* Online indicator */}
+              {onlineUsers.includes(user._id) && (
+                <span className="absolute bottom-0 right-0 size-3 bg-success rounded-full border-2 border-base-100"></span>
               )}
             </div>
 
-            {/* User info - only visible on larger screens */}
-            <div className="hidden lg:block text-left min-w-0">
-              <div className="font-medium truncate">{user.fullName}</div>
-              <div className="text-sm text-zinc-400">
-                {onlineUsers?.includes(user._id) ? "Online" : "Offline"}
-              </div>
+            <div className="hidden lg:block text-left min-w-0 flex-1">
+              <h3 className="font-medium truncate">{user.fullName}</h3>
+              <p className="text-sm text-base-content/60 truncate">
+                {onlineUsers.includes(user._id) ? (
+                  <span className="text-success">Online</span>
+                ) : (
+                  "Offline"
+                )}
+              </p>
             </div>
           </button>
         ))}
-
-        {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No online users</div>
-        )}
       </div>
     </aside>
   );
 };
+
 export default Sidebar;
