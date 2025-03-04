@@ -1,23 +1,33 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/Axios";
 import toast from "react-hot-toast";
+import { io } from "socket.io-client";
 
-export const useAuthStore = create((set) => ({
+export const useAuthStore = create((set, get) => ({
   authUser: null,
   isSigningUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
   isCheckingAuth: true,
   onlineUsers: [],
+  socket: null,
+
+  initSocket: () => {
+    const socket = io("http://localhost:5001"); // Or your backend URL
+    socket.on("connect", () => {
+      console.log("Socket connected");
+    });
+    set({ socket });
+  },
 
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
-      set({ authUser: res.data});
-      
+      set({ authUser: res.data });
+      get().initSocket();
     } catch (error) {
       console.log("Error checking auth", error);
-      set({ authUser: null});
+      set({ authUser: null });
     } finally {
       set({ isCheckingAuth: false });
     }
@@ -55,7 +65,11 @@ export const useAuthStore = create((set) => ({
   logout: async () => {
     try {
       await axiosInstance.post("/auth/logout");
-      set({ authUser: null });
+      const { socket } = get();
+      if (socket) {
+        socket.disconnect();
+      }
+      set({ authUser: null, socket: null });
       toast.success("Logged out successfully");
     } catch (error) {
       const errorMessage = error.response?.data?.message || "An error occurred";
