@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 import NoChatSelected from "../components/NoChatSelected";
 import ChatContainer from "../components/ChatContainer";
 
-export const HomePage = () => {
+export default function HomePage() {
   const { selectedUser } = useChatStore();
 
   return (
@@ -20,4 +20,4 @@ export const HomePage = () => {
       </div>
     </div>
   );
-};
+}

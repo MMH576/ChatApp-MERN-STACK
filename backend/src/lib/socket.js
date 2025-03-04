@@ -5,68 +5,49 @@ import express from "express";
 const app = express();
 const server = http.createServer(app);
 
-let io;
-const userSocketMap = new Map(); // userId -> socketId
+const io = new Server(server, {
+  cors: {
+    origin: ["http://localhost:5173"],
+    methods: ["GET", "POST"]
+  },
+});
 
-export const initSocket = (socketIO) => {
-  io = socketIO;
-  
-  io.on("connection", (socket) => {
-    console.log("New client connected", socket.id);
+export function getReceiverSocketId(userId) {
+  return userSocketMap[userId];
+}
 
-    socket.on("setup", (userId) => {
-      if (!userId) {
-        console.log("Setup event received without userId");
-        return;
-      }
-      
-      // Remove any existing socket connections for this user
-      for (const [existingUserId, existingSocketId] of userSocketMap.entries()) {
-        if (existingUserId === userId) {
-          userSocketMap.delete(existingUserId);
-        }
-      }
+// used to store online users
+const userSocketMap = {}; // {userId: socketId}
 
-      userSocketMap.set(userId, socket.id);
-      socket.userId = userId; // Store userId in socket object
-      socket.join(userId);
-      console.log("User connected:", userId);
-      console.log("Current online users:", Array.from(userSocketMap.keys()));
-      
-      // Broadcast to all clients
-      io.emit("onlineUsers", Array.from(userSocketMap.keys()));
-    });
+io.on("connection", (socket) => {
+  console.log("User connected", socket.id);
 
-    socket.on("disconnect", () => {
-      if (socket.userId) {
-        userSocketMap.delete(socket.userId);
-        console.log("User disconnected:", socket.userId);
-        console.log("Remaining online users:", Array.from(userSocketMap.keys()));
-        io.emit("onlineUsers", Array.from(userSocketMap.keys()));
-      }
+  const userId = socket.handshake.query.userId;
+  if (userId) userSocketMap[userId] = socket.id;
+
+  // io.emit() is used to send events to all the connected clients
+  io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+  socket.on("join chat", (userId) => {
+    socket.join(userId);
+    console.log("User joined room:", userId);
+  });
+
+  socket.on("send message", (message) => {
+    const chat = message.chat;
+    if (!chat.users) return;
+
+    chat.users.forEach((user) => {
+      if (user._id === message.sender._id) return;
+      socket.in(user._id).emit("new message", message);
     });
   });
-};
 
-export const getReceiverSocketId = (receiverId) => {
-  return userSocketMap.get(receiverId);
-};
+  socket.on("disconnect", () => {
+    console.log("User disconnected", socket.id);
+    delete userSocketMap[userId];
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+  });
+});
 
-export const getIO = () => {
-  if (!io) {
-    throw new Error('Socket.io not initialized');
-  }
-  return io;
-};
-
-export const emitMessage = (receiverId, event, data) => {
-  const io = getIO();
-  const receiverSocketId = getReceiverSocketId(receiverId);
-  
-  if (receiverSocketId) {
-    console.log(`Emitting ${event} to ${receiverId}`);
-    io.to(receiverSocketId).emit(event, data);
-  }
-};
-
-export default { io, server, app };
+export { io, app, server };

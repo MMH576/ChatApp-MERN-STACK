@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import AuthImagePattern from "../components/AuthImagePattern";
 import { toast } from "react-hot-toast";
 
-export const SignUpPage = () => {
+export default function SignUpPage() {
   console.log("SignUpPage rendered");
   const [formData, setFormData] = useState({
     fullName: "",
@@ -167,4 +167,4 @@ export const SignUpPage = () => {
       />
     </div>
   );
-};
+}
