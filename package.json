@@ -1,0 +1,21 @@
+{
+  "name": "chatapp-mern-stack",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run build --prefix frontend",
+    "start": "npm run start --prefix frontend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MMH576/ChatApp-MERN-STACK.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MMH576/ChatApp-MERN-STACK/issues"
+  },
+  "homepage": "https://github.com/MMH576/ChatApp-MERN-STACK#readme",
+  "description": ""
+}
