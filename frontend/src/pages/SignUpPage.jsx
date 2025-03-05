@@ -22,7 +22,7 @@ export default function SignUpPage() {
   });
   const [showPassword, setShowPassword] = useState(false);
 
-  const { signUp, isSigningUp } = useAuthStore();
+  const { signup, isSigningUp } = useAuthStore();
 
   const validateForm = () => {
     if (!formData.fullName.trim()) return toast.error("Full name is required");
@@ -40,7 +40,7 @@ export default function SignUpPage() {
     e.preventDefault();
     const success = validateForm();
     if (success === true) {
-      signUp(formData);
+      signup(formData);
     }
   };
 
