@@ -1,4 +1,4 @@
-import Navbar from "./components/Navbar.jsx";
+import NavBar from "./components/NavBar.jsx";
 
 import HomePage from "./pages/HomePage";
 import SignUpPage from "./pages/SignUpPage";
@@ -35,7 +35,7 @@ const App = () => {
 
   return (
     <div data-theme={theme}>
-      <Navbar />
+      <NavBar />
 
       <Routes>
         <Route
